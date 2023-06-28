@@ -10,12 +10,12 @@ I'm still a novice with ffmpeg and would appreciate some feedback. The project h
 1) First, you need to install it:
 
    ```
-   pip install ffmpeg_python_utils
+   pip install ffmpeg-python-utils
    ```
 
-2) Next, you need to extract the ffmpeg binary folder to the directory where your main.py file is located.
+2) Next, you need to extract the ffmpeg binary folder to the root project directory.
 
-3) Check the settings in config.py.
+3) Check the settings in [config.py](https://lionelcrowl.github.io/ffmpeg-python-utils/configuration/).
 
 4) Enjoy!
 

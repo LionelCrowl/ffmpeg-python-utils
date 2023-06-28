@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     # Adding video to video
     add_video_to_video(input_video_path=input_path,
-                       video_to_overlay_paths=['./test/test subclip 2.mp4', './test/test subclip 2.mp4'],
+                       video_to_overlay_paths=[output_path+'with blurred space orig.mp4', output_path+'padded video 1280 orig.mp4'],
                        goal_sizes=[[1280, -1], [400, -1]], x_y_coordinates=[[0, -720], [300, 400]], start_times=[1.5],
                        durations=[2], output_path=output_path+'with overlayed video.mp4', fade_duration=1, opacities=[0.5, 1])
 
@@ -82,7 +82,7 @@ if __name__ == '__main__':
     get_resized_image(picture, output_path + '_resized picture.png', [100, -1])
 
     # Getting frames of the video
-    get_frame(input_path, './test/frames/frame_0.png', 2)
+    get_frame(input_path, './test/frame_0.png', 2)
 
     # Getting audio from the video
     get_audio_from_video(input_path, output_path=output_path+'audio test.wav')
