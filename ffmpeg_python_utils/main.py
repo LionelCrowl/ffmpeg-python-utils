@@ -5,7 +5,7 @@ import subprocess
 import os
 from functools import wraps
 from .config import C_TO_RENAME_FILES, C_TO_PRINT_PACKAGE_INFO, C_TO_SAVE_LOGS, C_TO_PRINT_FFMPEG_DEBUG, \
-    C_TO_PRINT_EXECUTION_TIME, C_CODEC, C_CODEC_SETTINGS
+    C_TO_PRINT_EXECUTION_TIME, C_CODEC, C_CODEC_SETTINGS, C_TO_PRINT_ONLY_FFMPEG_ERRORS
 from .inc import replace_forbidden_chars, print_info, make_lists_equal, \
     get_codec_meeting_constraints, save_string_return_output
 
@@ -96,8 +96,13 @@ def run_command(cmd, filter_str=None):
     is_ffprobe = cmd.startswith('ffprobe')
     # Construct cmd line
     cmd += ' -report' if C_TO_SAVE_LOGS else ''
-    cmd += ' -loglevel debug' if C_TO_PRINT_FFMPEG_DEBUG else ' -loglevel warning'
-    cmd += ' -stats' if not is_ffprobe else ''
+    if C_TO_PRINT_ONLY_FFMPEG_ERRORS:
+        cmd += ' -loglevel fatal'
+    elif C_TO_PRINT_FFMPEG_DEBUG:
+        cmd += ' -loglevel debug'
+    else:
+        cmd += ' -loglevel warning'
+    cmd += ' -stats' if not is_ffprobe and not C_TO_PRINT_ONLY_FFMPEG_ERRORS else ''
     command_file = ''
     if len(cmd) > 8000:
         command_file = save_string_return_output(filter_str, 'cmd_tmp.txt')

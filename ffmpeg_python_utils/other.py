@@ -88,7 +88,7 @@ def remove_silence_from_audio_file(input_path: str, output_path: str, audio_form
                                    min_silence_len: int = 100, silence_thresh: int = -45,
                                    keep_silence: int = 50) -> str:
     """
-    Removes silence from audio file.
+    Removes silence from audio file. Results are cached taking in account hash of the input files and kwargs passed.
 
     Args:
         input_path (str): The path to the audio file.
