@@ -371,7 +371,7 @@
 
 
 <h2 id="ffmpeg_python_utils.other.find_offsets" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_offsets</span><span class="p">(</span><span class="n">within_file</span><span class="p">,</span> <span class="n">find_file</span><span class="p">,</span> <span class="n">multiplier</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_tries_number</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">find_offsets</span><span class="p">(</span><span class="n">within_file</span><span class="p">,</span> <span class="n">find_file</span><span class="p">,</span> <span class="n">multiplier</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_tries_number</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">to_print_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 </h2>
 
@@ -475,6 +475,20 @@
                 <code>400</code>
           </td>
         </tr>
+        <tr>
+          <td><code>to_print_plots</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>whether to print plot before proceeding</p>
+            </div>
+          </td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -561,9 +575,10 @@
 <span class="normal">181</span>
 <span class="normal">182</span>
 <span class="normal">183</span>
-<span class="normal">184</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cache_results</span>
+<span class="normal">184</span>
+<span class="normal">185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cache_results</span>
 <span class="k">def</span> <span class="nf">find_offsets</span><span class="p">(</span><span class="n">within_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">find_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">multiplier</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">max_tries_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">400</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+                 <span class="n">max_tries_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">400</span><span class="p">,</span> <span class="n">to_print_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Finds time codes of appearance audio of find_file in within_file using scipy.</span>
 
@@ -574,6 +589,7 @@
 <span class="sd">        window (int): the length of find_file audio to use for the correlation (in seconds)</span>
 <span class="sd">        number (int): the goal number of offsets to return</span>
 <span class="sd">        max_tries_number (int): maximum number of tries to find the number</span>
+<span class="sd">        to_print_plots (bool): whether to print plot before proceeding</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        list: list of time codes</span>
@@ -589,7 +605,7 @@
 
     <span class="k">elif</span> <span class="n">number</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">C_TO_PRINT_PLOTS</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">to_print_plots</span><span class="p">:</span>
             <span class="n">plot_offsets</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">find_file</span><span class="p">)</span>
         <span class="n">peak</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">c</span> <span class="o">/</span> <span class="n">sr_within</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">peak</span><span class="p">]</span>
@@ -601,7 +617,7 @@
                 <span class="n">peaks</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">find_peaks</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">prominence</span><span class="o">=</span><span class="n">prominence</span><span class="p">)</span>
                 <span class="n">points_of_time</span> <span class="o">=</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">peak</span> <span class="o">/</span> <span class="n">sr_within</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">peak</span> <span class="ow">in</span> <span class="n">peaks</span><span class="p">]</span>
                 <span class="n">points_of_time</span> <span class="o">=</span> <span class="n">delete_neighbors</span><span class="p">(</span><span class="n">points_of_time</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">C_TO_PRINT_PLOTS</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">to_print_plots</span><span class="p">:</span>
                     <span class="n">plot_offsets</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">find_file</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">counter</span> <span class="o">&lt;</span> <span class="n">max_tries_number</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">C_TO_PRINT_PACKAGE_INFO</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span>
