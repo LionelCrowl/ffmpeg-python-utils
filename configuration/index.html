@@ -456,7 +456,7 @@
 
   <div class="doc doc-contents ">
   
-      <p>The codec we will use during the project.</p>
+      <p>The codec we use.</p>
   </div>
 
 </div>
@@ -466,7 +466,7 @@
 
 
 <h2 id="ffmpeg_python_utils.config.C_CODEC_SETTINGS" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">C_CODEC_SETTINGS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;nvidia&#39;</span><span class="p">:</span> <span class="s1">&#39;-c:v h264_nvenc -profile:v high -tune hq -rc-lookahead 8 -bf 2 -rc vbr -cq 26 -b:v 0 -maxrate 120M -bufsize 240M&#39;</span><span class="p">,</span> <span class="s1">&#39;amd&#39;</span><span class="p">:</span> <span class="s1">&#39;-c:v h264_amf&#39;</span><span class="p">,</span> <span class="s1">&#39;cpu&#39;</span><span class="p">:</span> <span class="s1">&#39;-c:v libx264&#39;</span><span class="p">}</span></code>
+<code class="highlight language-python"><span class="n">C_CODEC_SETTINGS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;nvidia&#39;</span><span class="p">:</span> <span class="s1">&#39;-c:v h264_nvenc -profile:v high -tune hq -rc-lookahead 8 -bf 2 -rc vbr -cq 10 -b:v 0 -maxrate 120M -bufsize 240M&#39;</span><span class="p">,</span> <span class="s1">&#39;amd&#39;</span><span class="p">:</span> <span class="s1">&#39;-c:v h264_amf&#39;</span><span class="p">,</span> <span class="s1">&#39;cpu&#39;</span><span class="p">:</span> <span class="s1">&#39;-c:v libx264 -crf 15&#39;</span><span class="p">}</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -478,7 +478,9 @@
   <div class="doc doc-contents ">
   
       <p>Specific settings for the codec. Nvidia is described here: 
-"https://video.stackexchange.com/questions/29659/is-there-a-way-to-improve-h264-nvenc-output-quality"</p>
+"https://video.stackexchange.com/questions/29659/is-there-a-way-to-improve-h264-nvenc-output-quality"
+"https://superuser.com/questions/1236275/how-can-i-use-crf-encoding-with-nvenc-in-ffmpeg"
+The default crf for cpu is 23. The higher the crf or cq, the worse the quality, but the smaller the file size.</p>
   </div>
 
 </div>
@@ -488,7 +490,7 @@
 
 
 <h2 id="ffmpeg_python_utils.config.C_TO_PRINT_EXECUTION_TIME" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">C_TO_PRINT_EXECUTION_TIME</span> <span class="o">=</span> <span class="kc">False</span></code>
+<code class="highlight language-python"><span class="n">C_TO_PRINT_EXECUTION_TIME</span> <span class="o">=</span> <span class="kc">True</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -573,7 +575,7 @@ checks if to print only errors.</p>
 
 
 <h2 id="ffmpeg_python_utils.config.C_TO_PRINT_PLOTS" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">C_TO_PRINT_PLOTS</span> <span class="o">=</span> <span class="kc">False</span></code>
+<code class="highlight language-python"><span class="n">C_TO_PRINT_PLOTS</span> <span class="o">=</span> <span class="kc">True</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
