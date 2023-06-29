@@ -10,7 +10,7 @@ import hashlib
 from functools import wraps
 import inspect
 from .inc import print_info
-from .config import C_TO_PRINT_PACKAGE_INFO, C_TO_PRINT_PLOTS
+from .config import C_TO_PRINT_PACKAGE_INFO
 
 
 def cache_results(function_to_modify):
@@ -124,7 +124,7 @@ def delete_neighbors(input_list):
 
 @cache_results
 def find_offsets(within_file: str, find_file: str, multiplier: float, window: int = 2, number: int = None,
-                 max_tries_number: int = 400) -> list:
+                 max_tries_number: int = 400, to_print_plots=False) -> list:
     """
     Finds time codes of appearance audio of find_file in within_file using scipy.
 
@@ -135,6 +135,7 @@ def find_offsets(within_file: str, find_file: str, multiplier: float, window: in
         window (int): the length of find_file audio to use for the correlation (in seconds)
         number (int): the goal number of offsets to return
         max_tries_number (int): maximum number of tries to find the number
+        to_print_plots (bool): whether to print plot before proceeding
 
     Returns:
         list: list of time codes
@@ -150,7 +151,7 @@ def find_offsets(within_file: str, find_file: str, multiplier: float, window: in
 
     elif number == 1:
         c = np.argmax(c)
-        if C_TO_PRINT_PLOTS:
+        if to_print_plots:
             plot_offsets(c, find_file)
         peak = round(c / sr_within, 2)
         return [peak]
@@ -162,7 +163,7 @@ def find_offsets(within_file: str, find_file: str, multiplier: float, window: in
                 peaks, _ = signal.find_peaks(c, prominence=prominence)
                 points_of_time = [round(peak / sr_within, 2) for peak in peaks]
                 points_of_time = delete_neighbors(points_of_time)
-                if C_TO_PRINT_PLOTS:
+                if to_print_plots:
                     plot_offsets(c, find_file)
                 if counter < max_tries_number:
                     if C_TO_PRINT_PACKAGE_INFO: print(

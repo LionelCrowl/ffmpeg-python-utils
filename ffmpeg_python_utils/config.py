@@ -10,8 +10,10 @@ C_CODEC_SETTINGS = {
 }
 """
 Specific settings for the codec. Nvidia is described here: 
-"https://video.stackexchange.com/questions/29659/is-there-a-way-to-improve-h264-nvenc-output-quality"
-"https://superuser.com/questions/1236275/how-can-i-use-crf-encoding-with-nvenc-in-ffmpeg"
+
+"https://video.stackexchange.com/questions/29659/is-there-a-way-to-improve-h264-nvenc-output-quality",
+"https://superuser.com/questions/1236275/how-can-i-use-crf-encoding-with-nvenc-in-ffmpeg".
+
 The default crf for cpu is 23. The higher the crf or cq, the worse the quality, but the smaller the file size.
 """
 
@@ -30,5 +32,3 @@ C_TO_PRINT_FFMPEG_DEBUG = False
 
 C_TO_RENAME_FILES = False
 """Whether to rename files. It should work with False."""
-C_TO_PRINT_PLOTS = True
-"""Whether to show plots during finding offsets before proceeding."""
