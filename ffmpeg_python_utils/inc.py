@@ -95,7 +95,7 @@ def save_string_return_output(string, output_path:str):
 def get_codec_meeting_constraints(sizes):
     """
     Function checks if current codec meets specific codec sizes constraint (min 145 for width/height for nvidia).
-    Checks only if size is integer. It takes in account if size is -1.
+    Checks only if size is integer. It proceeds to the next one if size is -1.
     TODO i don't know amd constraints so project needs some update here
     :param sizes: list of pair-sizes or just pair-sizes
     :return: codec to use
@@ -125,7 +125,7 @@ def get_codec_meeting_constraints(sizes):
         if use_cpu:
             print_info(
                 f'Width or height is less then 145, which is not compatible with nvidia codec. '
-                f'Using libx264 instead.',
+                f'Using cpu (libx264) instead.',
                 'red', C_TO_PRINT_PACKAGE_INFO)
             return 'cpu'
     return C_CODEC
