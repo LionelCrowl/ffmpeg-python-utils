@@ -118,7 +118,7 @@ def run_command(cmd, filter_str=None):
     if not is_ffprobe:
         time_diff = datetime.datetime.now() - start_time
         time_diff_seconds = time_diff.total_seconds()
-        print_info(f"Time it took (seconds): {round(time_diff_seconds, 3)}.", 'green', C_TO_PRINT_EXECUTION_TIME)
+        print_info(f"Time it took (seconds): {time_diff_seconds:.2f}.", 'green', C_TO_PRINT_EXECUTION_TIME)
     return res
 
 
@@ -449,10 +449,11 @@ def add_video_to_video(input_video_path: str, output_path: str, video_to_overlay
 
 
 @process
-def get_concantenated_videos(input_video_paths: list[str], output_path: str, effects: list[str],
-                             transition_durations: list[float]) -> str:
+def get_concantenated_videos(input_video_paths: list[str], output_path: str, effects: list[str] = None,
+                             transition_durations: list[float] = None) -> str:
     """
     Concatenates multiple videos together using ffmpeg.
+    If effects is False-like, then no transition_duration implemented.
 
     Args:
         input_video_paths (list[str]): A list of paths to the input video files.
@@ -474,16 +475,18 @@ def get_concantenated_videos(input_video_paths: list[str], output_path: str, eff
         video_info = get_video_info(input_video_path)
         video_durations.append(video_info['duration'])
         sizes.append([video_info['width'], video_info['height']])
-
-    # Checking for codec
+    # Checking codec
     codec_to_use = get_codec_meeting_constraints(sizes)
 
+
+    # We need this only if effects present
     # Calculate offset time
     offsets = []
-    for i in range(len(video_durations)):
-        offset = video_durations[i] - transition_durations[i]
-        offset += offsets[i - 1] if i > 0 else 0
-        offsets.append(offset)
+    if effects:
+        for i in range(len(video_durations)):
+            offset = video_durations[i] - transition_durations[i]
+            offset += offsets[i - 1] if i > 0 else 0
+            offsets.append(offset)
 
     # Construct input and filter str
     input_str = ''
@@ -491,17 +494,23 @@ def get_concantenated_videos(input_video_paths: list[str], output_path: str, eff
     filter_aud_str = ''
     for i in range(len(input_video_paths)):
         input_str += f'-i "{input_video_paths[i]}" '
-    for i in range(len(input_video_paths) - 1):
-        filter_vid_str += f'[0]' if i == 0 else f'[vv{i}]'
-        filter_aud_str += f'[0:a]' if i == 0 else f'[afade{i}]'
-        filter_vid_str += f'[{i + 1}:v]xfade=transition={effects[i]}:duration=1:offset={offsets[i]},format=yuv420p[vv{i + 1}];'
-        filter_aud_str += f'[{i + 1}:a]acrossfade=d={transition_durations[i]}[afade{i + 1}];'
+        if not effects:
+            filter_vid_str += f'[{i}:v][{i}:a]'
+    if effects:
+        for i in range(len(input_video_paths) - 1):
+            filter_vid_str += f'[0]' if i == 0 else f'[vv{i}]'
+            filter_aud_str += f'[0:a]' if i == 0 else f'[afade{i}]'
+            filter_vid_str += f'[{i + 1}:v]xfade=transition={effects[i]}:duration=1:offset={offsets[i]},format=yuv420p[vv{i + 1}];'
+            filter_aud_str += f'[{i + 1}:a]acrossfade=d={transition_durations[i]}[afade{i + 1}];'
+
+    filter_vid_str += f'concat=n={len(input_video_paths)}:v=1:a=1[outv]' if not effects else ''
+    map_str = f'-map "[afade{len(input_video_paths) - 1}]" -map "[vv{len(input_video_paths) - 1}]"' if effects else '-map [outv]'
 
     # Run command
     cmd = f'ffmpeg -y {input_str}-movflags +faststart ' \
           f'-filter_complex "{filter_vid_str + filter_aud_str}" ' \
-          f'{C_CODEC_SETTINGS[codec_to_use]} -map "[vv{len(input_video_paths) - 1}]" ' \
-          f'-map "[afade{len(input_video_paths) - 1}]" -fps_mode vfr "{output_path}"'
+          f'{map_str} {C_CODEC_SETTINGS[codec_to_use]} ' \
+          f'-fps_mode vfr "{output_path}"'
     run_command(cmd, filter_vid_str + filter_aud_str)
     return output_path
 
@@ -600,7 +609,7 @@ def get_cropped_video(input_video_path: str, output_path: str, size: list, x_y_c
     filter_str = f"crop={size[0]}:{size[1]}:{x_y_coordinate[0]}:{x_y_coordinate[1]}"
     # Crop the video
     cmd = f'ffmpeg -y -i "{input_video_path}" -movflags use_metadata_tags -movflags +faststart -filter_complex "{filter_str}" ' \
-          f'-crf 17 -preset slow {C_CODEC_SETTINGS[codec_to_use]} -c:a copy "{output_path}" '
+          f' -preset slow {C_CODEC_SETTINGS[codec_to_use]} -c:a copy "{output_path}" '
     run_command(cmd, filter_str)
     return output_path
 
