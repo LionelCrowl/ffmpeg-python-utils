@@ -10,7 +10,7 @@ import hashlib
 from functools import wraps
 import inspect
 from .inc import print_info
-from .config import C_TO_PRINT_PACKAGE_INFO
+from .config import C_TO_PRINT_PACKAGE_INFO, C_TIME_AMONG_NEIGHBOUR_PEAKS
 
 
 def cache_results(function_to_modify):
@@ -41,9 +41,7 @@ def cache_results(function_to_modify):
         if cached_searches:
             # Search for the current call dict in the cached ones
             time_codes = [i for i in cached_searches if
-                          i['hash_within'] == current_info['hash_within']
-                          and i['hash_find'] == current_info['hash_find']
-                          and all(k in i and v == i[k] for k, v in kwargs.items())]
+                          all(k in i and v == i[k] for k, v in kwargs.items())]
             if time_codes:
                 current_info.update({"time_codes": time_codes[0]["time_codes"]})
                 print(f'Found that this audio was already searched for offsets with the same parameters: '
@@ -117,14 +115,14 @@ def delete_neighbors(input_list):
     input_list.sort()
     output_list = [input_list[0]]
     for i in range(1, len(input_list)):
-        if input_list[i] - output_list[-1] >= 1.0:
+        if input_list[i] - output_list[-1] >= C_TIME_AMONG_NEIGHBOUR_PEAKS:
             output_list.append(input_list[i])
     return output_list
 
 
 @cache_results
 def find_offsets(within_file: str, find_file: str, multiplier: float, window: int = 2, number: int = None,
-                 max_tries_number: int = 400, to_print_plots=False) -> list:
+                 max_tries_number: int = 80, to_print_plots=False) -> list:
     """
     Finds time codes of appearance audio of find_file in within_file using scipy.
 
@@ -165,23 +163,27 @@ def find_offsets(within_file: str, find_file: str, multiplier: float, window: in
                 points_of_time = delete_neighbors(points_of_time)
                 if to_print_plots:
                     plot_offsets(c, find_file)
-                if counter < max_tries_number:
+                if counter > max_tries_number:
                     if C_TO_PRINT_PACKAGE_INFO: print(
                         f'Max try number reached. Returning the last time codes. {points_of_time}')
                     return points_of_time
                 if number and number != len(points_of_time):
-                    print(
-                        f'Try number № {counter}. Looking for peaks. The goal number is {number}, the number we got is {len(points_of_time)}. Prominence: {prominence}')
-                    if C_TO_PRINT_PACKAGE_INFO: print(f'Time codes we got: {points_of_time}')
+                    print_info(
+                        f'Try number № {counter}. Looking for peaks. The goal number is {number}, the number we got is {len(points_of_time)}. Prominence: {prominence}',
+                        'white', C_TO_PRINT_PACKAGE_INFO)
+                    if C_TO_PRINT_PACKAGE_INFO: print_info(f'Time codes we got: {points_of_time}', 'white')
                     if number > len(points_of_time):
                         diff = number - len(points_of_time)
-                        prominence *= 0.95 if diff > 5 else 0.99
+                        prominence *= 0.80 if diff > 5 else 0.95
                     else:
                         prominence *= 1.01
+                    counter += 1
                     continue
+                print_info(f'Found specified number={number}. Offsets: {points_of_time}', 'white',
+                           C_TO_PRINT_PACKAGE_INFO)
                 return points_of_time
             except IndexError:
-                prominence -= 10
+                prominence *= 0.8
                 counter += 1
 
 

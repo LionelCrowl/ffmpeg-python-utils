@@ -32,3 +32,7 @@ C_TO_PRINT_FFMPEG_DEBUG = False
 
 C_TO_RENAME_FILES = False
 """Whether to rename files. It should work with False."""
+C_TIME_AMONG_NEIGHBOUR_PEAKS = 1
+"""
+Implemented in find_offsets. How far from each other should offsets be placed?
+"""
