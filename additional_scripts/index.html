@@ -371,7 +371,7 @@
 
 
 <h2 id="ffmpeg_python_utils.other.find_offsets" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_offsets</span><span class="p">(</span><span class="n">within_file</span><span class="p">,</span> <span class="n">find_file</span><span class="p">,</span> <span class="n">multiplier</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_tries_number</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">to_print_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">find_offsets</span><span class="p">(</span><span class="n">within_file</span><span class="p">,</span> <span class="n">find_file</span><span class="p">,</span> <span class="n">multiplier</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_tries_number</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">to_print_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 </h2>
 
@@ -472,7 +472,7 @@
             </div>
           </td>
           <td>
-                <code>400</code>
+                <code>80</code>
           </td>
         </tr>
         <tr>
@@ -516,7 +516,9 @@
 
       <details class="quote">
         <summary>Source code in <code>ffmpeg_python_utils\other.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">125</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
 <span class="normal">126</span>
 <span class="normal">127</span>
 <span class="normal">128</span>
@@ -576,9 +578,11 @@
 <span class="normal">182</span>
 <span class="normal">183</span>
 <span class="normal">184</span>
-<span class="normal">185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cache_results</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@cache_results</span>
 <span class="k">def</span> <span class="nf">find_offsets</span><span class="p">(</span><span class="n">within_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">find_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">multiplier</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">max_tries_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">400</span><span class="p">,</span> <span class="n">to_print_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+                 <span class="n">max_tries_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span> <span class="n">to_print_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Finds time codes of appearance audio of find_file in within_file using scipy.</span>
 
@@ -619,23 +623,27 @@
                 <span class="n">points_of_time</span> <span class="o">=</span> <span class="n">delete_neighbors</span><span class="p">(</span><span class="n">points_of_time</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">to_print_plots</span><span class="p">:</span>
                     <span class="n">plot_offsets</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">find_file</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">counter</span> <span class="o">&lt;</span> <span class="n">max_tries_number</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">counter</span> <span class="o">&gt;</span> <span class="n">max_tries_number</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">C_TO_PRINT_PACKAGE_INFO</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s1">&#39;Max try number reached. Returning the last time codes. </span><span class="si">{</span><span class="n">points_of_time</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
                     <span class="k">return</span> <span class="n">points_of_time</span>
                 <span class="k">if</span> <span class="n">number</span> <span class="ow">and</span> <span class="n">number</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">points_of_time</span><span class="p">):</span>
-                    <span class="nb">print</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s1">&#39;Try number № </span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s1">. Looking for peaks. The goal number is </span><span class="si">{</span><span class="n">number</span><span class="si">}</span><span class="s1">, the number we got is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">points_of_time</span><span class="p">)</span><span class="si">}</span><span class="s1">. Prominence: </span><span class="si">{</span><span class="n">prominence</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">C_TO_PRINT_PACKAGE_INFO</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Time codes we got: </span><span class="si">{</span><span class="n">points_of_time</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">print_info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;Try number № </span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s1">. Looking for peaks. The goal number is </span><span class="si">{</span><span class="n">number</span><span class="si">}</span><span class="s1">, the number we got is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">points_of_time</span><span class="p">)</span><span class="si">}</span><span class="s1">. Prominence: </span><span class="si">{</span><span class="n">prominence</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">C_TO_PRINT_PACKAGE_INFO</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">C_TO_PRINT_PACKAGE_INFO</span><span class="p">:</span> <span class="n">print_info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Time codes we got: </span><span class="si">{</span><span class="n">points_of_time</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;white&#39;</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">number</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">points_of_time</span><span class="p">):</span>
                         <span class="n">diff</span> <span class="o">=</span> <span class="n">number</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">points_of_time</span><span class="p">)</span>
-                        <span class="n">prominence</span> <span class="o">*=</span> <span class="mf">0.95</span> <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="k">else</span> <span class="mf">0.99</span>
+                        <span class="n">prominence</span> <span class="o">*=</span> <span class="mf">0.80</span> <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="k">else</span> <span class="mf">0.95</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">prominence</span> <span class="o">*=</span> <span class="mf">1.01</span>
+                    <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="k">continue</span>
+                <span class="n">print_info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Found specified number=</span><span class="si">{</span><span class="n">number</span><span class="si">}</span><span class="s1">. Offsets: </span><span class="si">{</span><span class="n">points_of_time</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;white&#39;</span><span class="p">,</span>
+                           <span class="n">C_TO_PRINT_PACKAGE_INFO</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">points_of_time</span>
             <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-                <span class="n">prominence</span> <span class="o">-=</span> <span class="mi">10</span>
+                <span class="n">prominence</span> <span class="o">*=</span> <span class="mf">0.8</span>
                 <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -779,7 +787,9 @@
 
       <details class="quote">
         <summary>Source code in <code>ffmpeg_python_utils\other.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 87</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
 <span class="normal"> 88</span>
 <span class="normal"> 89</span>
 <span class="normal"> 90</span>
@@ -801,9 +811,7 @@
 <span class="normal">106</span>
 <span class="normal">107</span>
 <span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">remove_silence_from_audio_file</span><span class="p">(</span><span class="n">input_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">audio_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;wav&#39;</span><span class="p">,</span>
+<span class="normal">109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">remove_silence_from_audio_file</span><span class="p">(</span><span class="n">input_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">audio_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;wav&#39;</span><span class="p">,</span>
                                    <span class="n">min_silence_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">silence_thresh</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">45</span><span class="p">,</span>
                                    <span class="n">keep_silence</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
