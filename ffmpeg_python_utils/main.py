@@ -211,7 +211,7 @@ def add_text_to_video(input_video_path: str, output_path: str, texts: list[str],
         if start_times is not None and durations is not None:
             filter_str += f":enable='between(t,{start_times[i]},{start_times[i] + durations[i]})'"
         filter_str += f'[v{i + 1}]'
-        filter_str += ';'
+        filter_str += ';' if i != len(texts) - 1 else ''
     # Run
     cmd = f'ffmpeg -y -i "{input_video_path}" -movflags +faststart ' \
           f'-filter_complex "{filter_str}" -map [v{len(texts)}] -map 0:a {C_CODEC_SETTINGS[C_CODEC]} {output_path}'
@@ -272,7 +272,8 @@ def add_image_to_video(input_video_path: str, output_path: str, input_image_path
 
         filter_str_1 += f"[0]" if i == 0 else f"[bg{i - 1}]"
         filter_str_1 += f"[{if_img_str}{i + 1}]overlay=x={x_y_coordinates[i][0]}:y={x_y_coordinates[i][1]}:" \
-                        f"enable='between(t,{start_times[i]},{start_times[i] + durations[i]})':shortest=1[bg{i}];"
+                        f"enable='between(t,{start_times[i]},{start_times[i] + durations[i]})':shortest=1[bg{i}]"
+        filter_str_1 += ';' if i != len(input_image_paths) - 1 else ''
 
     # Run command
     cmd = (f'ffmpeg -y {files_str} '
@@ -435,7 +436,8 @@ def add_video_to_video(input_video_path: str, output_path: str, video_to_overlay
         filter_str_0 += f'scale={goal_sizes[i][0]}:{goal_sizes[i][1]}[v{i + 1}];'
 
         filter_str_1 += f'[orig]' if i == 0 else f'[fin{i}]'
-        filter_str_1 += f'[v{i + 1}]overlay={x_y_coordinates[i][0]}:{x_y_coordinates[i][1]}[fin{i + 1}];'
+        filter_str_1 += f'[v{i + 1}]overlay={x_y_coordinates[i][0]}:{x_y_coordinates[i][1]}[fin{i + 1}]'
+        filter_str_1 += ';' if i != len(video_to_overlay_paths) - 1 else ''
 
     # Run command
     cmd = f'ffmpeg -y -i "{input_video_path}" {input_str} -movflags +faststart -filter_complex ' \
